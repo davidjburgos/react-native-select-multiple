@@ -61,18 +61,23 @@ export default class SelectMultiple extends Component {
   }
 
   componentDidMount () {
-    const rows = this.getRowData(this.props)
+    const rows = SelectMultiple.getRowData(this.props)
     this.setState({ dataSource: rows })
   }
 
-  componentWillReceiveProps (nextProps) {
-    const rows = this.getRowData(nextProps)
-    this.setState({ dataSource: rows })
+  static getDerivedStateFromProps(props, state) {
+    const rows = SelectMultiple.getRowData(props)
+    if (rows !== state.dataSource) {
+      return { dataSource: rows };
+    }
+
+    // Return null to indicate no change to state.
+    return null;
   }
 
-  getRowData ({ items, selectedItems }) {
-    items = items.map(this.toLabelValueObject)
-    selectedItems = (selectedItems || []).map(this.toLabelValueObject)
+  static getRowData ({ items, selectedItems }) {
+    items = items.map(SelectMultiple.toLabelValueObject)
+    selectedItems = (selectedItems || []).map(SelectMultiple.toLabelValueObject)
 
     items.forEach((item) => {
       item.selected = selectedItems.some((i) => i.value === item.value)
@@ -85,7 +90,7 @@ export default class SelectMultiple extends Component {
     const { label, value } = row
     let { selectedItems, maxSelect } = this.props
 
-    selectedItems = (selectedItems || []).map(this.toLabelValueObject)
+    selectedItems = (selectedItems || []).map(SelectMultiple.toLabelValueObject)
 
     const index = selectedItems.findIndex((selectedItem) => selectedItem.value === value)
     if (index === -1) {
@@ -104,7 +109,7 @@ export default class SelectMultiple extends Component {
     this.props.onSelectionsChange(selectedItems, { label, value })
   }
 
-  toLabelValueObject (obj) {
+  static toLabelValueObject (obj) {
     if (Object.prototype.toString.call(obj) === '[object String]') {
       return { label: obj, value: obj }
     } else {
