@@ -19,7 +19,7 @@ const styleType = PropTypes.oneOfType([
 
 const sourceType = PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 
-// A customizable FlatList that allows you to select multiple rows
+// A customiseable FlatList that allows you to select multiple rows
 export default class SelectMultiple extends Component {
   static propTypes = {
     items: PropTypes.arrayOf(itemType).isRequired,
@@ -88,12 +88,14 @@ export default class SelectMultiple extends Component {
     selectedItems = (selectedItems || []).map(this.toLabelValueObject)
 
     const index = selectedItems.findIndex((selectedItem) => selectedItem.value === value)
-
-    if (index > -1) {
-      selectedItems = selectedItems.filter((selectedItem) => selectedItem.value !== value)
-    } else {
+    if (index === -1) {
       if (maxSelect != null && selectedItems.length >= maxSelect) {
-        return
+        if (maxSelect === 1) {
+          selectedItems = selectedItems.filter((selectedItem) => selectedItem.value === value)
+          selectedItems = selectedItems.concat({ label, value })
+        } else {
+          return
+        }
       } else {
         selectedItems = selectedItems.concat({ label, value })
       }
